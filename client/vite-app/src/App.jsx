@@ -6,11 +6,14 @@ export default function App() {
   const [todos, setTodos] = useState([]);
   const [content, setContent] = useState("");
 
+  // ✅ Your Render backend URL
+  const API_URL = "https://awesometodos-v2-1.onrender.com/api/todos";
+
   // Fetch todos on load
   useEffect(() => {
     const getTodos = async () => {
       try {
-        const res = await fetch("/api/todos");
+        const res = await fetch(API_URL);
         const data = await res.json();
         setTodos(data);
       } catch (err) {
@@ -25,7 +28,7 @@ export default function App() {
     e.preventDefault();
     if (content.length > 3) {
       try {
-        const res = await fetch("/api/todos", {
+        const res = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ todo: content }),
           headers: {
