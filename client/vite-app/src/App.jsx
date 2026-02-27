@@ -2,45 +2,46 @@ import { useEffect, useState } from "react";
 import Todo from "./Todo";
 import "./App.css";
 
-// ✅ Full backend URL
-const API_URL = "https://awesometodos-v2-1.onrender.com/api/todos"; // <-- use your deployed backend URL
+// ✅ Backend URL (deployed)
+const BACKEND_URL = "https://awesometodos-v2-1.onrender.com";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [content, setContent] = useState("");
 
-  // Fetch todos on load
+  // Fetch todos on mount
   useEffect(() => {
-    const getTodos = async () => {
+    const fetchTodos = async () => {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(`${BACKEND_URL}/api/todos`);
         const data = await res.json();
         setTodos(data);
       } catch (err) {
         console.error("Failed to fetch todos:", err);
       }
     };
-    getTodos();
+    fetchTodos();
   }, []);
 
   // Create new todo
   const createNewTodo = async (e) => {
     e.preventDefault();
-    if (content.length > 3) {
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ todo: content }),
-          headers: { "Content-Type": "application/json" },
-        });
-        const newTodo = await res.json();
-        setTodos([...todos, newTodo]);
-        setContent("");
-      } catch (err) {
-        console.error("Failed to create todo:", err);
-      }
-    } else {
-      alert("Todo must be longer than 3 characters");
+    if (content.trim().length <= 3) {
+      return alert("Todo must be longer than 3 characters");
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/todos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ todo: content }),
+      });
+
+      const newTodo = await res.json();
+      setTodos((prev) => [...prev, newTodo]);
+      setContent("");
+    } catch (err) {
+      console.error("Failed to create todo:", err);
     }
   };
 
@@ -62,9 +63,7 @@ export default function App() {
 
       <div className="todos">
         {todos.length > 0 ? (
-          todos.map((todo) => (
-            <Todo todo={todo} setTodos={setTodos} key={todo._id} />
-          ))
+          todos.map((todo) => <Todo todo={todo} setTodos={setTodos} key={todo._id} />)
         ) : (
           <p>No todos found.</p>
         )}

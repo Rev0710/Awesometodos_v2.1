@@ -1,42 +1,33 @@
-export default function Todo(props) {
-  // Toggle todo status
-  const updateTodo = async (todoId, currentStatus) => {
-    try {
-      const res = await fetch(`/api/todos/${todoId}`, {
-        method: "PUT",
-        body: JSON.stringify({ status: !currentStatus }), // toggle status
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const json = await res.json();
+const BACKEND_URL = "https://awesometodos-v2-1.onrender.com";
 
-      if (json.acknowledged) {
-        // Update frontend immediately
-        props.setTodos((currentTodos) =>
-          currentTodos.map((todo) =>
-            todo._id === todoId ? { ...todo, status: !todo.status } : todo
-          )
-        );
-      }
+export default function Todo({ todo, setTodos }) {
+  // Toggle status immediately (optimistic UI)
+  const updateTodo = async (todoId, currentStatus) => {
+    setTodos((curr) =>
+      curr.map((t) => (t._id === todoId ? { ...t, status: !t.status } : t))
+    );
+
+    try {
+      await fetch(`${BACKEND_URL}/api/todos/${todoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: !currentStatus }),
+      });
     } catch (err) {
-      console.error("Failed to update todo status:", err);
+      console.error("Failed to update todo:", err);
+      // revert if error
+      setTodos((curr) =>
+        curr.map((t) => (t._id === todoId ? { ...t, status: currentStatus } : t))
+      );
     }
   };
 
   // Delete todo
   const deleteTodo = async (todoId) => {
     try {
-      const res = await fetch(`/api/todos/${todoId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`${BACKEND_URL}/api/todos/${todoId}`, { method: "DELETE" });
       const json = await res.json();
-
-      if (json.acknowledged) {
-        props.setTodos((currentTodos) =>
-          currentTodos.filter((todo) => todo._id !== todoId)
-        );
-      }
+      if (json.acknowledged) setTodos((curr) => curr.filter((t) => t._id !== todoId));
     } catch (err) {
       console.error("Failed to delete todo:", err);
     }
@@ -44,24 +35,11 @@ export default function Todo(props) {
 
   return (
     <div className="todo">
-      <p>{props.todo.todo}</p>
-      <div className="mutations">
-        {/* Status toggle button */}
-        <button
-          className="todo__status"
-          onClick={() => updateTodo(props.todo._id, props.todo.status)}
-        >
-          {props.todo.status ? "☑" : "☐"}
-        </button>
-
-        {/* Delete button */}
-        <button
-          className="todo__delete"
-          onClick={() => deleteTodo(props.todo._id)}
-        >
-          🗑️
-        </button>
-      </div>
+      <p>{todo.todo}</p>
+      <button onClick={() => updateTodo(todo._id, todo.status)}>
+        {todo.status ? "☑" : "☐"}
+      </button>
+      <button onClick={() => deleteTodo(todo._id)}>🗑️</button>
     </div>
   );
 }
