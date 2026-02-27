@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Todo from "./Todo";
 import "./App.css";
 
-// ✅ Set your Render backend URL here
-const API_URL = "https://awesometodos-v2-1.onrender.com/todos";
+// ✅ Full backend URL
+const API_URL = "https://awesometodos-v2-1.onrender.com/api/todos"; // <-- use your deployed backend URL
 
 export default function App() {
   const [todos, setTodos] = useState([]);
@@ -31,12 +31,10 @@ export default function App() {
         const res = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ todo: content }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         });
         const newTodo = await res.json();
-        setTodos([...todos, { ...newTodo, todo: content, status: false }]);
+        setTodos([...todos, newTodo]);
         setContent("");
       } catch (err) {
         console.error("Failed to create todo:", err);
@@ -50,7 +48,6 @@ export default function App() {
     <main className="container">
       <h1 className="title">Awesome Todos</h1>
 
-      {/* Todo creation form */}
       <form className="form" onSubmit={createNewTodo}>
         <input
           type="text"
@@ -63,7 +60,6 @@ export default function App() {
         <button type="submit">Create Todo</button>
       </form>
 
-      {/* Todos list */}
       <div className="todos">
         {todos.length > 0 ? (
           todos.map((todo) => (
