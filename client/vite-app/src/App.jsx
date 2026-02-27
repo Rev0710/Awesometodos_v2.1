@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import Todo from "./Todo";
 import "./App.css";
 
+// ✅ Set your Render backend URL here
+const API_URL = "https://awesometodos-v2-1.onrender.com/todos";
+
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [content, setContent] = useState("");
-
-  // ✅ Your Render backend URL
-  const API_URL = "https://awesometodos-v2-1.onrender.com/api/todos";
 
   // Fetch todos on load
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function App() {
           },
         });
         const newTodo = await res.json();
-        setTodos([...todos, newTodo]);
+        setTodos([...todos, { ...newTodo, todo: content, status: false }]);
         setContent("");
       } catch (err) {
         console.error("Failed to create todo:", err);
