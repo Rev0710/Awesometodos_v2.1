@@ -1,9 +1,17 @@
 const express = require("express");
 const { connectDB } = require("./models/index");
 const { ObjectId } = require("mongodb");
+const cors = require("cors"); // ✅ added CORS
 
 const app = express();
 app.use(express.json());
+
+// ✅ Add CORS to allow frontend to access backend
+app.use(cors({
+  origin: "https://awesometodos-frontend.onrender.com", // <-- replace with your frontend Render URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 async function startServer() {
   const db = await connectDB();
@@ -53,7 +61,7 @@ async function startServer() {
     }
   });
 
-  //  PUT update (FIXED VERSION)
+  // PUT update (FIXED VERSION)
   app.put("/todos/:id", async (req, res) => {
     try {
       const { id } = req.params;
@@ -90,7 +98,6 @@ async function startServer() {
         return res.status(404).json({ error: "Todo not found" });
       }
 
-      //  EXACT RESPONSE FORMAT YOU REQUESTED
       res.status(200).json({
         acknowledged: result.acknowledged,
         modifiedCount: result.modifiedCount,
@@ -105,33 +112,33 @@ async function startServer() {
     }
   });
 
-  // ✅ DELETE (UPDATED FORMAT)
-app.delete("/todos/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+  // DELETE
+  app.delete("/todos/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
 
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid ID format" });
+      }
+
+      const result = await collection.deleteOne({
+        _id: new ObjectId(id)
+      });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: "Todo not found" });
+      }
+
+      res.status(200).json({
+        Awknowledged: result.acknowledged,
+        deletecount: result.deletedCount,
+        message: "Todo deleted successfully"
+      });
+
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete todo" });
     }
-
-    const result = await collection.deleteOne({
-      _id: new ObjectId(id)
-    });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: "Todo not found" });
-    }
-
-    res.status(200).json({
-      Awknowledged: result.acknowledged,   // matches your requested format
-      deletecount: result.deletedCount,
-      message: "Todo deleted successfully"
-    });
-
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete todo" });
-  }
-});
+  });
 
   app.listen(3000, () => {
     console.log("Server is listening on http://localhost:3000/todos");
