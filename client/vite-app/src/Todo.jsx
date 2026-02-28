@@ -1,23 +1,26 @@
-const BACKEND_URL = "https://awesometodos-v2-1.onrender.com";
-
-export default function Todo({ todo, setTodos }) {
+export default function Todo({ todo, setTodos, backendUrl }) {
   // Toggle status immediately (optimistic UI)
   const updateTodo = async (todoId, currentStatus) => {
+    // Optimistic UI update
     setTodos((curr) =>
-      curr.map((t) => (t._id === todoId ? { ...t, status: !t.status } : t))
+      curr.map((t) =>
+        t._id === todoId ? { ...t, Status: !t.Status } : t
+      )
     );
 
     try {
-      await fetch(`${BACKEND_URL}/api/todos/${todoId}`, {
+      await fetch(`${backendUrl}/api/todos/${todoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: !currentStatus }),
+        body: JSON.stringify({ Status: !currentStatus }),
       });
     } catch (err) {
       console.error("Failed to update todo:", err);
-      // revert if error
+      // Revert on error
       setTodos((curr) =>
-        curr.map((t) => (t._id === todoId ? { ...t, status: currentStatus } : t))
+        curr.map((t) =>
+          t._id === todoId ? { ...t, Status: currentStatus } : t
+        )
       );
     }
   };
@@ -25,9 +28,12 @@ export default function Todo({ todo, setTodos }) {
   // Delete todo
   const deleteTodo = async (todoId) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/todos/${todoId}`, { method: "DELETE" });
+      const res = await fetch(`${backendUrl}/api/todos/${todoId}`, {
+        method: "DELETE",
+      });
       const json = await res.json();
-      if (json.acknowledged) setTodos((curr) => curr.filter((t) => t._id !== todoId));
+      if (json.acknowledged)
+        setTodos((curr) => curr.filter((t) => t._id !== todoId));
     } catch (err) {
       console.error("Failed to delete todo:", err);
     }
@@ -36,8 +42,8 @@ export default function Todo({ todo, setTodos }) {
   return (
     <div className="todo">
       <p>{todo.todo}</p>
-      <button onClick={() => updateTodo(todo._id, todo.status)}>
-        {todo.status ? "☑" : "☐"}
+      <button onClick={() => updateTodo(todo._id, todo.Status)}>
+        {todo.Status ? "☑" : "☐"}
       </button>
       <button onClick={() => deleteTodo(todo._id)}>🗑️</button>
     </div>
