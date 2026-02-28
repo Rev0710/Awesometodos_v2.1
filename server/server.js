@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 
-// ✅ Replace with your MongoDB Atlas connection string
+//MongoDB Atlas connection string
 const MONGO_URI = "mongodb+srv://jrevdelarosa:Delarosa@cluster0.l33ooxq.mongodb.net/MyNewDatabase?retryWrites=true&w=majority";
 const DATABASE_NAME = "MyNewDatabase";
 
 const app = express();
 app.use(express.json());
 
-// ✅ Enable CORS for your frontend
+//Enable CORS For Frontend 
 app.use(
   cors({
     origin: "https://awesometodos-frontend.onrender.com",
