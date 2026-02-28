@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ API routes FIRST
+// API routes FIRST
 app.use("/api/todos", router);
 
-// ✅ Correct Vite build path
+// Correct Vite build path
 const clientPath = path.resolve(__dirname, "../client/vite-app/dist");
 
 if (fs.existsSync(path.join(clientPath, "index.html"))) {
@@ -24,10 +24,10 @@ if (fs.existsSync(path.join(clientPath, "index.html"))) {
     res.sendFile(path.join(clientPath, "index.html"));
   });
 
-  console.log("✅ Serving frontend from:", clientPath);
+  console.log("Serving frontend from:", clientPath);
 } else {
-  console.log("❌ Frontend build not found.");
-  console.log("👉 Run: cd client/vite-app && npm run build");
+  console.log(" Frontend build not found.");
+  console.log(" Run: cd client/vite-app && npm run build");
 }
 
 const PORT = process.env.PORT || 3000;
@@ -37,7 +37,7 @@ const startServer = async () => {
   console.log("✅ Connected to MongoDB Atlas");
 
   app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
   });
 };
 
