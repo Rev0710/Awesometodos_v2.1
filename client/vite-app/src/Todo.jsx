@@ -1,7 +1,5 @@
 export default function Todo({ todo, setTodos, backendUrl }) {
-  // Toggle status immediately (optimistic UI)
   const updateTodo = async (todoId, currentStatus) => {
-    // Optimistic UI update
     setTodos((curr) =>
       curr.map((t) =>
         t._id === todoId ? { ...t, Status: !t.Status } : t
@@ -16,7 +14,6 @@ export default function Todo({ todo, setTodos, backendUrl }) {
       });
     } catch (err) {
       console.error("Failed to update todo:", err);
-      // Revert on error
       setTodos((curr) =>
         curr.map((t) =>
           t._id === todoId ? { ...t, Status: currentStatus } : t

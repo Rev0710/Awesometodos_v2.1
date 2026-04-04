@@ -2,14 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 
-//MongoDB Atlas connection string
 const MONGO_URI = "mongodb+srv://jrevdelarosa:Delarosa@cluster0.l33ooxq.mongodb.net/MyNewDatabase?retryWrites=true&w=majority";
 const DATABASE_NAME = "MyNewDatabase";
 
 const app = express();
 app.use(express.json());
 
-//Enable CORS For Frontend 
 app.use(
   cors({
     origin: "https://awesometodos-frontend.onrender.com",
@@ -26,10 +24,8 @@ async function connectDB() {
   await client.connect();
   db = client.db(DATABASE_NAME);
   todosCollection = db.collection("todos");
-  console.log("✅ Connected to MongoDB Atlas");
+  console.log("Connected to MongoDB Atlas");
 }
-
-// ---------- ROUTES ----------
 
 // GET all todos
 app.get("/api/todos", async (req, res) => {
@@ -102,7 +98,7 @@ app.delete("/api/todos/:id", async (req, res) => {
   }
 });
 
-// Start server
+// Restart server function
 async function startServer() {
   await connectDB();
   app.listen(3000, () => console.log("Backend running on http://localhost:3000"));

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
-  const [newTodo, setNewTodo] = useState(""); // State for the new todo input
+  const [newTodo, setNewTodo] = useState("");
 
   useEffect(() => {
     const getTodos = async () => {
@@ -16,7 +16,6 @@ export default function App() {
   }, []);
 
   const handleStatusChange = async (id, currentStatus) => {
-    // Optimistically update the UI
     setTodos(
       todos.map((todo) =>
         todo._id === id ? { ...todo, status: !currentStatus } : todo
@@ -34,32 +33,26 @@ export default function App() {
       });
 
       if (!res.ok) {
-        // If the backend update fails, revert the UI change
         setTodos(
           todos.map((todo) =>
             todo._id === id ? { ...todo, status: currentStatus } : todo
           )
         );
         console.error("Failed to update todo status in the backend");
-        // Optionally show an error message to the user
       }
-
-      // Optionally refresh the todos from the backend to ensure data consistency
       // getTodos();
     } catch (error) {
-      // If there's an error during the fetch, revert the UI change
       setTodos(
         todos.map((todo) =>
           todo._id === id ? { ...todo, status: currentStatus } : todo
         )
       );
       console.error("Error updating todo status:", error);
-      // Optionally show an error message to the user
     }
   };
 
   const handleAddTodo = async () => {
-    if (newTodo.trim() === "") return; // Prevent adding empty todos
+    if (newTodo.trim() === "") return;
 
     try {
       // Make a POST request to add the new todo to the backend
@@ -68,20 +61,18 @@ export default function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ todo: newTodo, status: false }), // Initial status is false
+        body: JSON.stringify({ todo: newTodo, status: false }),
       });
 
       if (res.ok) {
         const addedTodo = await res.json();
-        setTodos([...todos, addedTodo]); // Add the new todo to the UI
-        setNewTodo(""); // Clear the input field
+        setTodos([...todos, addedTodo]);
+        setNewTodo("");
       } else {
         console.error("Failed to add todo to the backend");
-        // Optionally show an error message to the user
       }
     } catch (error) {
       console.error("Error adding todo:", error);
-      // Optionally show an error message to the user
     }
   };
 

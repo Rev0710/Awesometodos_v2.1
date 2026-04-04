@@ -1,16 +1,15 @@
-// server/models/index.js
 const { MongoClient } = require('mongodb');
 
-const uri = "mongodb://localhost:27017"; // replace with your MongoDB URI if different
-const dbName = "Awesometodos_v2_1"; // replace with your database name
+const uri = "mongodb://localhost:27017";
+const dbName = "Awesometodos_v2_1";
 
-let db; // to hold the connected database
+let db;
 
 async function connectDB() {
-  if (db) return db; // reuse existing connection
+  if (db) return db;
 
   try {
-    const client = new MongoClient(uri); // no need for useNewUrlParser or useUnifiedTopology
+    const client = new MongoClient(uri);
     await client.connect();
     console.log("Connected to MongoDB");
 
@@ -18,7 +17,7 @@ async function connectDB() {
     return db;
   } catch (err) {
     console.error("DB connection failed:", err);
-    process.exit(1); // stop server if DB connection fails
+    process.exit(1);
   }
 }
 

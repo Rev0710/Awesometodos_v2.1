@@ -6,7 +6,7 @@ const { ObjectId } = require("mongodb");
 // Helper to get collection
 const getCollection = () => {
   const client = getConnectedClient();
-  return client.db("MyNewDatabase").collection("todos"); // ← must match your Atlas DB
+  return client.db("MyNewDatabase").collection("todos");
 };
 
 // GET /api/todos
@@ -38,7 +38,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Todo is required" });
     }
 
-    // ensure todo is string
     todo = String(todo);
 
     const newTodo = {
@@ -58,7 +57,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT /api/todos/:id (update status only)
+// PUT /(Update the status in the back end only)
 router.put("/:id", async (req, res) => {
   try {
     const collection = getCollection();
